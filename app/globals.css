@@ -97,6 +97,11 @@ body {
   letter-spacing: 1px;
 }
 
+.earth-tip {
+  color: var(--accent);
+  opacity: 0.9;
+}
+
 /* ---- crosshair ---- */
 #crosshair {
   position: fixed;
@@ -142,11 +147,6 @@ body {
   box-shadow: 0 0 20px var(--accent-dim);
 }
 
-.earth-tip {
-  color: var(--accent);
-  opacity: 0.9;
-}
-
 /* ---- hint bar ---- */
 #hint-bar {
   position: fixed;
@@ -160,28 +160,37 @@ body {
   pointer-events: none;
 }
 
-/* ---- cinematics panel ---- */
-#cine-panel {
+/* ---- right-hand panel stack ---- */
+#hud-right {
   position: fixed;
   top: 18px;
   right: 18px;
   width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 15;
+  transition: opacity 0.3s ease;
+}
+
+#cine-panel,
+#world-panel {
   padding: 16px;
   background: var(--panel-bg);
   border: 1px solid var(--accent-dim);
   border-radius: 10px;
   backdrop-filter: blur(6px);
-  z-index: 15;
 }
 
-#cine-panel .panel-title {
+#hud-right .panel-title {
   font-size: 12px;
   letter-spacing: 4px;
   color: var(--accent);
   margin-bottom: 12px;
 }
 
-#cine-panel select {
+#hud-right select,
+#hud-right input {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;
@@ -192,13 +201,18 @@ body {
   font-size: 13px;
 }
 
-#cine-panel .row {
+#hud-right input::placeholder {
+  color: var(--text);
+  opacity: 0.4;
+}
+
+#hud-right .row {
   display: flex;
   gap: 8px;
   margin-bottom: 8px;
 }
 
-#cine-panel button {
+#hud-right button {
   flex: 1;
   width: 100%;
   padding: 9px 0;
@@ -212,35 +226,33 @@ body {
   transition: background 0.15s ease;
 }
 
-#cine-panel button:hover {
+#hud-right button:hover {
   background: rgba(55, 200, 255, 0.25);
 }
 
-#cine-panel button:disabled {
+#hud-right button:disabled {
   opacity: 0.4;
   cursor: default;
 }
 
-#record-all-btn {
+#record-all-btn,
+#save-world-btn {
   margin-bottom: 10px;
 }
 
-#cine-status {
+#cine-status,
+#world-status {
   font-size: 11px;
   line-height: 1.7;
   opacity: 0.7;
 }
 
-/* hide panel while pointer-locked (walking), during playback, or on Earth */
-body.walking #cine-panel,
-body.cinematic #cine-panel,
-body.earthview #cine-panel {
+/* hide panels while pointer-locked (walking), during playback, or on Earth */
+body.walking #hud-right,
+body.cinematic #hud-right,
+body.earthview #hud-right {
   opacity: 0;
   pointer-events: none;
-}
-
-#cine-panel {
-  transition: opacity 0.3s ease;
 }
 
 /* ---- recording indicator ---- */

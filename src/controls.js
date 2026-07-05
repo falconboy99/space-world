@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
-import { CONFIG } from './config.js';
 
 // First-person movement: walk on the deck (with gravity + jump),
 // or press F to fly freely (E/Q for up/down).
-export function createPlayerControls(camera, domElement) {
-  const cfg = CONFIG.player;
+export function createPlayerControls(camera, domElement, config) {
+  const cfg = config.player;
+  const deckRadius = config.deck.radius;
   const controls = new PointerLockControls(camera, domElement);
 
   camera.position.fromArray(cfg.spawn);
@@ -15,7 +15,7 @@ export function createPlayerControls(camera, domElement) {
   let velocityY = 0;
   let onGround = true;
 
-  document.addEventListener('keydown', (e) => {
+  const onKeyDown = (e) => {
     keys.add(e.code);
     if (e.code === 'KeyF' && controls.isLocked) {
       flying = !flying;
@@ -25,8 +25,10 @@ export function createPlayerControls(camera, domElement) {
       velocityY = cfg.jumpVelocity;
       onGround = false;
     }
-  });
-  document.addEventListener('keyup', (e) => keys.delete(e.code));
+  };
+  const onKeyUp = (e) => keys.delete(e.code);
+  document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('keyup', onKeyUp);
 
   const horizontal = new THREE.Vector2();
 
@@ -64,7 +66,7 @@ export function createPlayerControls(camera, domElement) {
       }
       // Keep the walker on the platform.
       horizontal.set(pos.x, pos.z);
-      const maxR = CONFIG.deck.radius - 2;
+      const maxR = deckRadius - 2;
       if (horizontal.length() > maxR) {
         horizontal.setLength(maxR);
         pos.x = horizontal.x;
@@ -84,6 +86,12 @@ export function createPlayerControls(camera, domElement) {
       velocityY = 0;
       onGround = true;
       flying = false;
+    },
+    dispose() {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keyup', onKeyUp);
+      if (controls.isLocked) controls.unlock();
+      controls.dispose?.();
     },
   };
 }

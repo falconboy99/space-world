@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { CONFIG } from './config.js';
 import { createTriStars } from './tristars.js';
 
 const textureLoader = new THREE.TextureLoader();
@@ -275,23 +274,24 @@ function buildDriftRocks(cfg) {
   return { group, rocks };
 }
 
-// Builds the whole scene from CONFIG and returns handles + an update loop.
-export function createWorld(scene) {
+// Builds the whole scene from the given config and returns handles +
+// an update loop. The config shape is defined in config.js.
+export function createWorld(scene, config) {
   const glowTexture = makeGlowTexture();
 
-  scene.background = new THREE.Color(CONFIG.space.background);
-  scene.add(new THREE.AmbientLight(CONFIG.ambientLight.color, CONFIG.ambientLight.intensity));
+  scene.background = new THREE.Color(config.space.background);
+  scene.add(new THREE.AmbientLight(config.ambientLight.color, config.ambientLight.intensity));
 
-  const deck = buildDeck(CONFIG.deck);
+  const deck = buildDeck(config.deck);
   scene.add(deck);
 
-  scene.add(buildStars(CONFIG.stars));
-  scene.add(buildNebulae(CONFIG.nebulae, glowTexture));
+  scene.add(buildStars(config.stars));
+  scene.add(buildNebulae(config.nebulae, glowTexture));
 
-  const tri = createTriStars(CONFIG.triSystem, glowTexture, loadTexture(CONFIG.triSystem.texture));
+  const tri = createTriStars(config.triSystem, glowTexture, loadTexture(config.triSystem.texture));
   scene.add(tri.group);
 
-  const planets = CONFIG.planets.map((p) => {
+  const planets = config.planets.map((p) => {
     const built = buildPlanet(p);
     scene.add(built.group);
     return built;
@@ -317,10 +317,10 @@ export function createWorld(scene) {
     };
   }
 
-  const belt = buildAsteroidBelt(CONFIG.asteroids);
+  const belt = buildAsteroidBelt(config.asteroids);
   scene.add(belt);
 
-  const drift = buildDriftRocks(CONFIG.driftRocks);
+  const drift = buildDriftRocks(config.driftRocks);
   scene.add(drift.group);
 
   const hologram = deck.getObjectByName('hologram');
@@ -339,11 +339,11 @@ export function createWorld(scene) {
         if (p.clouds) p.clouds.rotation.y += p.spin * 1.3 * dt;
         for (const m of p.moonPivots) m.pivot.rotation.y += m.speed * dt;
       }
-      belt.rotation.y += CONFIG.asteroids.beltSpeed * dt;
+      belt.rotation.y += config.asteroids.beltSpeed * dt;
       hologram.rotation.y += 0.4 * dt;
       hologram.rotation.x += 0.15 * dt;
       for (const d of drift.rocks) {
-        d.rock.position.y = d.baseY + Math.sin(elapsed * CONFIG.driftRocks.bobSpeed + d.phase) * 1.5;
+        d.rock.position.y = d.baseY + Math.sin(elapsed * config.driftRocks.bobSpeed + d.phase) * 1.5;
         d.rock.rotation.y += d.spin * dt;
       }
     },
