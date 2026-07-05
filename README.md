@@ -58,3 +58,6 @@ The world is fully config-driven, so changes are usually one-file edits:
 
 In the browser console, `window.SpaceWorld` exposes the live `scene`,
 `camera`, `world`, `cinematics`, and `recorder` for experimentation.
+
+
+Live demonstration on https://space-world-eight.vercel.app/
